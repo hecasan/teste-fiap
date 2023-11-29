@@ -1,20 +1,56 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 
-export default function App() {
+const App = () => {
+  const [count, setCount] = useState(0);
+  const [data, setData] = useState([]);
+
+  const handlePress = () => {
+    setCount(count + 1);
+    setData([...data, `Item ${count + 1}`]);
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
+      <TouchableOpacity style={styles.button} onPress={handlePress}>
+        <Text style={styles.buttonText}>Adicionar Item</Text>
+      </TouchableOpacity>
+
+      <FlatList
+        data={data}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.listItem}>
+            <Text>{item}</Text>
+          </View>
+        )}
+      />
     </View>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    padding: 16,
+  },
+  button: {
+    backgroundColor: 'blue',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 16,
+  },
+  buttonText: {
+    color: 'white',
+    fontSize: 16,
+  },
+  listItem: {
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
   },
 });
+
+export default App;
