@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const App = () => {
   const [count, setCount] = useState(0);
@@ -49,7 +50,7 @@ const App = () => {
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => handleRemoveTask(item.id)}>
-              <Text style={styles.removeTask}>Remover</Text>
+              <Icon name="trash" size={20} color="red" />
             </TouchableOpacity>
           </View>
         )}
@@ -88,6 +89,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 8,
+    width: '230px',
+    borderBottomWidth: 1,
+    borderBottomColor: 'gray',
+    paddingBottom: 15,
   },
   completedTask: {
     fontSize: 16,
@@ -97,11 +102,6 @@ const styles = StyleSheet.create({
   uncompletedTask: {
     fontSize: 16,
     color: 'black',
-  },
-  removeTask: {
-    fontSize: 16,
-    color: 'red',
-    marginLeft: 8,
   },
 });
 
