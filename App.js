@@ -10,21 +10,40 @@ const App = () => {
     setData([...data, `Item ${count + 1}`]);
   };
 
+  const handleRemove = () => {
+    if (data.length > 0) {
+      const newData = [...data];
+      newData.pop();
+      setData(newData);
+      setCount(count - 1);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={handlePress}>
         <Text style={styles.buttonText}>Adicionar Item</Text>
       </TouchableOpacity>
 
-      <FlatList
-        data={data}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.listItem}>
-            <Text>{item}</Text>
-          </View>
-        )}
-      />
+      <TouchableOpacity style={styles.button} onPress={handleRemove} disabled={data.length === 0}>
+        <Text style={[styles.buttonText, { color: data.length === 0 ? 'gray' : 'white' }]}>
+          Remover Último Item
+        </Text>
+      </TouchableOpacity>
+
+      {data.length === 0 ? (
+        <Text style={styles.message}>Adicione uma nova lista</Text>
+      ) : (
+        <FlatList
+          data={data}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item }) => (
+            <View style={styles.listItem}>
+              <Text>{item}</Text>
+            </View>
+          )}
+        />
+      )}
     </View>
   );
 };
@@ -43,13 +62,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   buttonText: {
-    color: 'white',
     fontSize: 16,
+    color: 'white',
   },
   listItem: {
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#ccc',
+  },
+  message: {
+    fontSize: 16,
+    fontStyle: 'italic',
+    color: '#888',
   },
 });
 
