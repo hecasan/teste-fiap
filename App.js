@@ -1,49 +1,59 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, TextInput, StyleSheet } from 'react-native';
 
 const App = () => {
   const [count, setCount] = useState(0);
-  const [data, setData] = useState([]);
+  const [tasks, setTasks] = useState([]);
+  const [newTask, setNewTask] = useState('');
 
-  const handlePress = () => {
-    setCount(count + 1);
-    setData([...data, `Item ${count + 1}`]);
+  const handleAddTask = () => {
+    if (newTask.trim() !== '') {
+      setCount(count + 1);
+      setTasks([...tasks, { id: count + 1, text: newTask, completed: false }]);
+      setNewTask('');
+    }
   };
 
-  const handleRemove = () => {
-    if (data.length > 0) {
-      const newData = [...data];
-      newData.pop();
-      setData(newData);
-      setCount(count - 1);
-    }
+  const handleToggleTask = (taskId) => {
+    const updatedTasks = tasks.map((task) =>
+      task.id === taskId ? { ...task, completed: !task.completed } : task
+    );
+    setTasks(updatedTasks);
+  };
+
+  const handleRemoveTask = (taskId) => {
+    const updatedTasks = tasks.filter((task) => task.id !== taskId);
+    setTasks(updatedTasks);
   };
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={handlePress}>
-        <Text style={styles.buttonText}>Adicionar Item</Text>
+      <TextInput
+        style={styles.input}
+        placeholder="Adicionar nova tarefa"
+        value={newTask}
+        onChangeText={(text) => setNewTask(text)}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleAddTask}>
+        <Text style={styles.buttonText}>Adicionar Tarefa</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleRemove} disabled={data.length === 0}>
-        <Text style={[styles.buttonText, { color: data.length === 0 ? 'gray' : 'white' }]}>
-          Remover Último Item
-        </Text>
-      </TouchableOpacity>
-
-      {data.length === 0 ? (
-        <Text style={styles.message}>Adicione uma nova lista</Text>
-      ) : (
-        <FlatList
-          data={data}
-          keyExtractor={(item, index) => index.toString()}
-          renderItem={({ item }) => (
-            <View style={styles.listItem}>
-              <Text>{item}</Text>
-            </View>
-          )}
-        />
-      )}
+      <FlatList
+        data={tasks}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <View style={styles.taskItem}>
+            <TouchableOpacity onPress={() => handleToggleTask(item.id)}>
+              <Text style={item.completed ? styles.completedTask : styles.uncompletedTask}>
+                {item.text}
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => handleRemoveTask(item.id)}>
+              <Text style={styles.removeTask}>Remover</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+      />
     </View>
   );
 };
@@ -55,6 +65,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
   },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 16,
+    padding: 8,
+    width: '100%',
+  },
   button: {
     backgroundColor: 'blue',
     padding: 10,
@@ -65,15 +83,25 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'white',
   },
-  listItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  taskItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
   },
-  message: {
+  completedTask: {
     fontSize: 16,
-    fontStyle: 'italic',
-    color: '#888',
+    textDecorationLine: 'line-through',
+    color: 'green',
+  },
+  uncompletedTask: {
+    fontSize: 16,
+    color: 'black',
+  },
+  removeTask: {
+    fontSize: 16,
+    color: 'red',
+    marginLeft: 8,
   },
 });
 
